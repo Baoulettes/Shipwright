@@ -89,6 +89,7 @@ namespace SohImGui {
     float navi_enemy_o_col[3] = { 0.0f, 0.0f, 0.0f };
     float navi_prop_i_col[3] = { 0.0f, 0.0f, 0.0f };
     float navi_prop_o_col[3] = { 0.0f, 0.0f, 0.0f };
+    ImVec4 FPSCounter;
 
     const char* filters[3] = {
         "Three-Point",
@@ -815,6 +816,16 @@ namespace SohImGui {
 
             if (ImGui::BeginMenu("Developer Tools"))
             {
+                if (ImGui::BeginMenu("FPS Counter")) {
+                    EnhancementCheckbox("Show FPS counter", "gDebugFPSCounterEnabled");
+                    Tooltip("FPS Counter for PC Master Race users.");
+                    EnhancementColor("FPS Counter color", "gFPSCounter", FPSCounter, ImVec4(255,255,255,255), true);
+                    ImGui::Separator();
+                    ImGui::Text("Position");
+                    EnhancementSliderInt("Top | Bottom : %d", "##FPSCounterPosY", "gFPSCounterPosY", 0, gfx_current_game_window_viewport.height, "");
+                    EnhancementSliderInt("Left | Right : %d", "##FPSCounterPosX", "gFPSCounterPosX", -5, gfx_current_game_window_viewport.width, "");
+                    ImGui::EndMenu();
+                }
                 EnhancementCheckbox("OoT Debug Mode", "gDebugEnabled");
                 Tooltip("Enables Debug Mode, allowing you to select maps with L + R + Z, noclip with L + D-pad Right,\nand open the debug menu with L on the pause screen");
                 EnhancementCheckbox("Fast File Select", "gSkipLogoTitle");
@@ -835,6 +846,7 @@ namespace SohImGui {
             bool Margins_isOpen = CVar_GetS32("gUseMargins", 0);
             bool Cosmetics_isOpen = CVar_GetS32("gCosmticsEditor", 0);
             bool Interface_isOpen = CVar_GetS32("gColorsEditor", 0);
+            bool FPSCounter_isOpen = CVar_GetS32("gDebugFPSCounterEnabled", 0);
 
             if (Margins_isOpen) {
                 if (!Margins_isOpen) {
@@ -949,6 +961,22 @@ namespace SohImGui {
                     ImGui::EndTabBar();
                 }
                 ImGui::PopStyleColor();
+                ImGui::End();
+            }
+            if (FPSCounter_isOpen) {
+                if (!FPSCounter_isOpen) {
+                    return;
+                }
+                ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBackground |
+                ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize |
+                ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar |
+                ImGuiWindowFlags_NoFocusOnAppearing;
+                ImGui::Begin("FPSCounter", nullptr, window_flags);
+                const float framerate = ImGui::GetIO().Framerate;
+                float PosX = CVar_GetS32("gFPSCounterPosX", 0);
+                float PosY = CVar_GetS32("gFPSCounterPosY", 0);
+                ImGui::SetWindowPos(ImVec2{PosX,PosY},0);
+                SohImGui::overlay->TextDraw(0,0,true,ImVec4{FPSCounter.x,FPSCounter.y,FPSCounter.z,FPSCounter.w}," %.1f FPS", framerate);
                 ImGui::End();
             }
 
