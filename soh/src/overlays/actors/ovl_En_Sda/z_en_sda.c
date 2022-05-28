@@ -141,9 +141,9 @@ void EnSda_ShadowMotion(Player* player, u8* shadowTexture, f32 arg2) {
     //printf("SDA - Moving Joints - Begin \n");
     for (i = 0; i < 16; i++) {
         if ((arg2 == 0.0f) || ((j = D_80AFA13C[i]) >= 0)) {
-            printf("SDA - Moving Joints - (arg2 == 0.0f) || ((j = D_80AFA13C[i]) >= 0) \n");
+            //printf("SDA - Moving Joints - (arg2 == 0.0f) || ((j = D_80AFA13C[i]) >= 0) \n");
             if (arg2 > 0.0f) {
-                printf("SDA - Moving Joints - arg2 > 0.0f \n");
+                //printf("SDA - Moving Joints - arg2 > 0.0f \n");
                 lerp.x = D_80AFA660[i].x + (D_80AFA660[j].x - D_80AFA660[i].x) * arg2;
                 lerp.y = D_80AFA660[i].y + (D_80AFA660[j].y - D_80AFA660[i].y) * arg2;
                 lerp.z = D_80AFA660[i].z + (D_80AFA660[j].z - D_80AFA660[i].z) * arg2;
@@ -152,7 +152,7 @@ void EnSda_ShadowMotion(Player* player, u8* shadowTexture, f32 arg2) {
                 sp88.y = lerp.y - player->actor.world.pos.y + BREG(48) + 76.0f + 30.0f - 105.0f + 15.0f;
                 sp88.z = lerp.z - player->actor.world.pos.z;
             } else {
-                printf("SDA - Moving Joints - arg2 <= 0.0f \n");
+                //printf("SDA - Moving Joints - arg2 <= 0.0f \n");
                 sp88.x = D_80AFA660[i].x - player->actor.world.pos.x;
                 sp88.y = D_80AFA660[i].y - player->actor.world.pos.y + BREG(48) + 76.0f + 30.0f - 105.0f + 15.0f;
                 sp88.z = D_80AFA660[i].z - player->actor.world.pos.z;
@@ -164,7 +164,7 @@ void EnSda_ShadowMotion(Player* player, u8* shadowTexture, f32 arg2) {
             temp_t1 = (s16)sp7C.y << 6;
 
             if (D_80AFA15C[i] == 2) {
-                printf("SDA - Moving Joints - D_80AFA15C[i] == 2 \n");
+                //printf("SDA - Moving Joints - D_80AFA15C[i] == 2 \n");
                 for (j = 0, phi_a3 = -0x180; j < 12; j++, phi_a3 += 0x40) {
                     for (phi_a0 = -D_80AFA108[j]; phi_a0 < D_80AFA108[j]; phi_a0++) {
                         temp_v1 = temp_t0 + phi_a0;
@@ -177,7 +177,7 @@ void EnSda_ShadowMotion(Player* player, u8* shadowTexture, f32 arg2) {
                     }
                 }
             } else if (D_80AFA15C[i] == 1) {
-                printf("SDA - Moving Joints - D_80AFA15C[i] == 1 \n");
+                //printf("SDA - Moving Joints - D_80AFA15C[i] == 1 \n");
                 for (j = 0, phi_a3 = -0x100; j < 8; j++, phi_a3 += 0x40) {
                     for (phi_a0 = -D_80AFA0F8[j]; phi_a0 < D_80AFA0F8[j]; phi_a0++) {
                         temp_v1 = temp_t0 + phi_a0;
@@ -190,7 +190,7 @@ void EnSda_ShadowMotion(Player* player, u8* shadowTexture, f32 arg2) {
                     }
                 }
             } else if (D_80AFA15C[i] == 0) {
-                printf("SDA - Moving Joints - D_80AFA15C[i] == 0 \n");
+                //printf("SDA - Moving Joints - D_80AFA15C[i] == 0 \n");
                 for (j = 0, phi_a3 = -0xC0; j < 7; j++, phi_a3 += 0x40) {
                     for (phi_a0 = -D_80AFA0E8[j]; phi_a0 < D_80AFA0E8[j] - 1; phi_a0++) {
                         temp_v1 = temp_t0 + phi_a0;
@@ -203,7 +203,7 @@ void EnSda_ShadowMotion(Player* player, u8* shadowTexture, f32 arg2) {
                     }
                 }
             } else if (D_80AFA15C[i] == 4) {
-                printf("SDA - Moving Joints - D_80AFA15C[i] == 4 \n");
+                //printf("SDA - Moving Joints - D_80AFA15C[i] == 4 \n");
                 for (j = 0, phi_a3 = -0x1C0; j < 14; j++, phi_a3 += 0x40) {
                     for (phi_a0 = -D_80AFA120[j]; phi_a0 < D_80AFA120[j]; phi_a0++) {
                         temp_v1 = temp_t0 + phi_a0;
@@ -216,7 +216,7 @@ void EnSda_ShadowMotion(Player* player, u8* shadowTexture, f32 arg2) {
                     }
                 }
             } else {
-                printf("SDA - Moving Joints - D_80AFA15C[i] == ?? \n");
+                //printf("SDA - Moving Joints - D_80AFA15C[i] == ?? \n");
                 for (j = 0, phi_a3 = -0x80; j < 6; j++, phi_a3 += 0x40) {
                     for (phi_a0 = -D_80AFA0DC[j]; phi_a0 < D_80AFA0DC[j] - 1; phi_a0++) {
                         temp_v1 = temp_t0 + phi_a0;
@@ -250,7 +250,7 @@ void EnSda_ShieldDraw(EnSda* this, u8* shadowTexture, Player* player, GlobalCont
     Vec3s sp178;
     Vec3f sp16C;
     Vec3f sp64[22];
-
+    FrameInterpolation_StartRecord();
     //printf("SDA CONT \n");
     if (BREG(57) != 0) {
         for (shadowTextureTemp = shadowTexture, i = 0; i < 0x1000; i++, shadowTextureTemp++) {
@@ -328,7 +328,8 @@ void EnSda_ShieldDraw(EnSda* this, u8* shadowTexture, Player* player, GlobalCont
             }
         }
     }
-    printf("SDA CONT 4\n");
+    FrameInterpolation_StopRecord();
+    //printf("SDA CONT 4\n");
 }
 
 void EnSda_MixedShadowDraw(u8* shadowTexture, Player* player, GlobalContext* globalCtx) {
@@ -339,7 +340,7 @@ void EnSda_MixedShadowDraw(u8* shadowTexture, Player* player, GlobalContext* glo
     GraphicsContext* gfxCtx = globalCtx->state.gfxCtx;
     OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
 
-    printf("SDA D 1 - Mixed shadow draw\n");
+    //printf("SDA D 1 - Mixed shadow draw\n");
     func_80094044(globalCtx->state.gfxCtx);
     gDPSetPrimColor(POLY_XLU_DISP++, 0x00, 0x00, 0, 0, 0, 120); //Alphe : (BREG(52) + 50)
     gDPSetEnvColor(POLY_XLU_DISP++, 0, 0, 0, 0);
@@ -364,6 +365,6 @@ void EnSda_MixedShadowDraw(u8* shadowTexture, Player* player, GlobalContext* glo
                   G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_XLU_DISP++, D_80AFA3F8);
     }
-    printf("SDA D 2 Mixed Shadow Draw End\n");
+    //printf("SDA D 2 Mixed Shadow Draw End\n");
     CLOSE_DISPS(gfxCtx, __FILE__, __LINE__);
 }
