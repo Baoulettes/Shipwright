@@ -735,6 +735,8 @@ namespace SohImGui {
                     Tooltip("Sets aspect ratio to 4:3 and lowers resolution to 240p, the N64's native resolution");
                     EnhancementCheckbox("Animated Link in Pause Menu", "gPauseLiveLink");
                     EnhancementCheckbox("Enable 3D Dropped items", "gNewDrops");
+                    EnhancementCheckbox("Link's Dynamic shadow", "gLinkDynShadow");
+                    Tooltip("Enable the work in progress Link's dynamic shadow.");
                     EnhancementCheckbox("Dynamic Wallet Icon", "gDynamicWalletIcon");
                     Tooltip("Changes the rupee in the wallet icon to match the wallet size you currently have");
                     EnhancementCheckbox("Always show dungeon entrances", "gAlwaysShowDungeonMinimapIcon");

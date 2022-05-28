@@ -9532,9 +9532,9 @@ void Player_Init(Actor* thisx, GlobalContext* globalCtx2) {
         }
     }
 
-    //if (CVar_GetS32("gLinkDynShadow", 0) != 0) {
+    if (CVar_GetS32("gLinkDynShadow", 0) != 0) {
         Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_SDA, thisx->world.pos.x, thisx->world.pos.y, thisx->world.pos.z, 0, 0, 0, 0);
-    //}
+    }
 
     if (gSaveContext.nayrusLoveTimer != 0) {
         gSaveContext.unk_13F0 = 3;
