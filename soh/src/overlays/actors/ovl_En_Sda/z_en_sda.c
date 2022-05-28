@@ -3,7 +3,7 @@
  * Overlay: ovl_En_Sda
  * Description: Dynamic shadow for Link
  */
-
+#include "soh/frame_interpolation.h"
 #include "z_en_sda.h"
 
 #define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5)
@@ -13,9 +13,9 @@ void EnSda_Destroy(Actor* thisx, GlobalContext* globalCtx);
 void EnSda_Update(Actor* thisx, GlobalContext* globalCtx);
 void EnSda_Draw(Actor* thisx, GlobalContext* globalCtx);
 
-void func_80AF95C4(EnSda* this, u8* shadowTexture, Player* player, GlobalContext* globalCtx);
-void func_80AF9C70(u8* shadowTexture, Player* player, GlobalContext* globalCtx);
-void func_80AF8F60(Player* player, u8* shadowTexture, f32 arg2);
+void EnSda_ShieldDraw(EnSda* this, u8* shadowTexture, Player* player, GlobalContext* globalCtx);    //Function original name : func_80AF95C4
+void EnSda_MixedShadowDraw(u8* shadowTexture, Player* player, GlobalContext* globalCtx);            //Function original name : func_80AF9C70
+void EnSda_ShadowMotion(Player* player, u8* shadowTexture, f32 arg2);                               //Function original name : func_80AF8F60
 
 const ActorInit En_Sda_InitVars = {
     ACTOR_EN_SDA,
@@ -99,26 +99,18 @@ void EnSda_Update(Actor* thisx, GlobalContext* globalCtx) {
     s32 pad;
     EnSda* this = (EnSda*)thisx;
     Player* player;
-
-    printf("SDA MOVE\n");
-
     if (this->actor.params == 1) {
         player = (Player*)this->actor.parent;
     } else {
         player = GET_PLAYER(globalCtx);
     }
-
     this->actor.world.pos = player->actor.world.pos;
-
-    printf("SDA MOVE END\n");
 }
 
 void EnSda_Draw(Actor* thisx, GlobalContext* globalCtx) {
     EnSda* this = (EnSda*)thisx;
     Player* player;
     u8* shadowTexture = Graph_Alloc(globalCtx->state.gfxCtx, 0x1000);
-
-    printf("SDA DRAW \n");
 
     if (this->actor.params == 1) {
         player = (Player*)this->actor.parent;
@@ -127,16 +119,14 @@ void EnSda_Draw(Actor* thisx, GlobalContext* globalCtx) {
     }
 
     player->actor.shape.shadowAlpha = 0;
-    func_80AF95C4(this, shadowTexture, player, globalCtx);
+    EnSda_ShieldDraw(this, shadowTexture, player, globalCtx);
 
     if (KREG(0) < 5) {
-        func_80AF9C70(shadowTexture, player, globalCtx);
+        EnSda_MixedShadowDraw(shadowTexture, player, globalCtx);
     }
-
-    printf("SDA DRAW END\n");
 }
 
-void func_80AF8F60(Player* player, u8* shadowTexture, f32 arg2) {
+void EnSda_ShadowMotion(Player* player, u8* shadowTexture, f32 arg2) {
     s16 temp_t0;
     s16 temp_t1;
     s16 temp_v1;
@@ -149,10 +139,11 @@ void func_80AF8F60(Player* player, u8* shadowTexture, f32 arg2) {
     Vec3f sp88;
     Vec3f sp7C;
 
-    printf("SDA - Moving Joints - Begin \n");
+    //printf("SDA - Moving Joints - Begin \n");
     for (i = 0; i < 16; i++) {
         if ((arg2 == 0.0f) || ((j = D_80AFA13C[i]) >= 0)) {
             if (arg2 > 0.0f) {
+                printf("SDA - Moving Joints - arg2 > 0.0f \n");
                 lerp.x = D_80AFA660[i].x + (D_80AFA660[j].x - D_80AFA660[i].x) * arg2;
                 lerp.y = D_80AFA660[i].y + (D_80AFA660[j].y - D_80AFA660[i].y) * arg2;
                 lerp.z = D_80AFA660[i].z + (D_80AFA660[j].z - D_80AFA660[i].z) * arg2;
@@ -161,6 +152,7 @@ void func_80AF8F60(Player* player, u8* shadowTexture, f32 arg2) {
                 sp88.y = lerp.y - player->actor.world.pos.y + BREG(48) + 76.0f + 30.0f - 105.0f + 15.0f;
                 sp88.z = lerp.z - player->actor.world.pos.z;
             } else {
+                printf("SDA - Moving Joints - arg2 <= 0.0f \n");
                 sp88.x = D_80AFA660[i].x - player->actor.world.pos.x;
                 sp88.y = D_80AFA660[i].y - player->actor.world.pos.y + BREG(48) + 76.0f + 30.0f - 105.0f + 15.0f;
                 sp88.z = D_80AFA660[i].z - player->actor.world.pos.z;
@@ -172,6 +164,7 @@ void func_80AF8F60(Player* player, u8* shadowTexture, f32 arg2) {
             temp_t1 = (s16)sp7C.y << 6;
 
             if (D_80AFA15C[i] == 2) {
+                printf("SDA - Moving Joints - D_80AFA15C[i] == 2 \n");
                 for (j = 0, phi_a3 = -0x180; j < 12; j++, phi_a3 += 0x40) {
                     for (phi_a0 = -D_80AFA108[j]; phi_a0 < D_80AFA108[j]; phi_a0++) {
                         temp_v1 = temp_t0 + phi_a0;
@@ -184,6 +177,7 @@ void func_80AF8F60(Player* player, u8* shadowTexture, f32 arg2) {
                     }
                 }
             } else if (D_80AFA15C[i] == 1) {
+                printf("SDA - Moving Joints - D_80AFA15C[i] == 1 \n");
                 for (j = 0, phi_a3 = -0x100; j < 8; j++, phi_a3 += 0x40) {
                     for (phi_a0 = -D_80AFA0F8[j]; phi_a0 < D_80AFA0F8[j]; phi_a0++) {
                         temp_v1 = temp_t0 + phi_a0;
@@ -196,6 +190,7 @@ void func_80AF8F60(Player* player, u8* shadowTexture, f32 arg2) {
                     }
                 }
             } else if (D_80AFA15C[i] == 0) {
+                printf("SDA - Moving Joints - D_80AFA15C[i] == 0 \n");
                 for (j = 0, phi_a3 = -0xC0; j < 7; j++, phi_a3 += 0x40) {
                     for (phi_a0 = -D_80AFA0E8[j]; phi_a0 < D_80AFA0E8[j] - 1; phi_a0++) {
                         temp_v1 = temp_t0 + phi_a0;
@@ -208,6 +203,7 @@ void func_80AF8F60(Player* player, u8* shadowTexture, f32 arg2) {
                     }
                 }
             } else if (D_80AFA15C[i] == 4) {
+                printf("SDA - Moving Joints - D_80AFA15C[i] == 4 \n");
                 for (j = 0, phi_a3 = -0x1C0; j < 14; j++, phi_a3 += 0x40) {
                     for (phi_a0 = -D_80AFA120[j]; phi_a0 < D_80AFA120[j]; phi_a0++) {
                         temp_v1 = temp_t0 + phi_a0;
@@ -220,6 +216,7 @@ void func_80AF8F60(Player* player, u8* shadowTexture, f32 arg2) {
                     }
                 }
             } else {
+                printf("SDA - Moving Joints - D_80AFA15C[i] == ?? \n");
                 for (j = 0, phi_a3 = -0x80; j < 6; j++, phi_a3 += 0x40) {
                     for (phi_a0 = -D_80AFA0DC[j]; phi_a0 < D_80AFA0DC[j] - 1; phi_a0++) {
                         temp_v1 = temp_t0 + phi_a0;
@@ -234,10 +231,10 @@ void func_80AF8F60(Player* player, u8* shadowTexture, f32 arg2) {
             }
         }
     }
-    printf("SDA - Moving Joints - end \n");
+    //printf("SDA - Moving Joints - end \n");
 }
 
-void func_80AF95C4(EnSda* this, u8* shadowTexture, Player* player, GlobalContext* globalCtx) {
+void EnSda_ShieldDraw(EnSda* this, u8* shadowTexture, Player* player, GlobalContext* globalCtx) {
     s16 temp_t0;
     s16 temp_t1;
     s16 temp_v0;
@@ -254,7 +251,7 @@ void func_80AF95C4(EnSda* this, u8* shadowTexture, Player* player, GlobalContext
     Vec3f sp16C;
     Vec3f sp64[22];
 
-    printf("SDA CONT \n");
+    //printf("SDA CONT \n");
     if (BREG(57) != 0) {
         for (shadowTextureTemp = shadowTexture, i = 0; i < 0x1000; i++, shadowTextureTemp++) {
             if ((i >= 0 && i < 0x40) || (i >= 0xFC0 && i < 0x1000) || ((i & 0x3F) == 0) || ((i & 0x3F) == 0x3F)) {
@@ -274,15 +271,15 @@ void func_80AF95C4(EnSda* this, u8* shadowTexture, Player* player, GlobalContext
             D_80AFA660[D_80AFA16C[i]] = player->bodyPartsPos[i];
         }
     }
-    printf("SDA CONT 2\n");
+    //printf("SDA CONT 2\n");
     D_80AFA660[0].y += 3.0f;
     D_80AFA660[15].x = D_80AFA660[0].x + ((D_80AFA660[15].x - D_80AFA660[0].x) * 1.2f);
     D_80AFA660[15].y = D_80AFA660[0].y + ((D_80AFA660[15].y - D_80AFA660[0].y) * -1.2f);
     D_80AFA660[15].z = D_80AFA660[0].z + ((D_80AFA660[15].z - D_80AFA660[0].z) * 1.2f);
     for (i = 0; i < 6; i++) {
-        func_80AF8F60(player, shadowTexture, i / 5.0f);
+        EnSda_ShadowMotion(player, shadowTexture, i / 5.0f);
     }
-    printf("SDA CONT 3\n");
+    //printf("SDA CONT 3\n");
     if (this->actor.params != 1) {
         Matrix_MtxFToYXZRotS(&player->shieldMf, &sp178, false);
         sp178.y += (KREG(87) << 0xF) + 0x8000;
@@ -293,7 +290,6 @@ void func_80AF95C4(EnSda* this, u8* shadowTexture, Player* player, GlobalContext
         Matrix_RotateX((sp178.x / 32768.0f) * M_PI, MTXMODE_APPLY);
         for (i = 0; i < 22; i++) {
             Matrix_MultVec3f(&D_80AFA180[i], &sp188);
-            if (1) {}
             sp64[i].x = (((KREG(82) / 100.0f) + 4.0f) * sp188.x) + sp16C.x;
             sp64[i].y = (((KREG(82) / 100.0f) + 4.0f) * sp188.y) + sp16C.y;
             sp64[i].z = (((KREG(82) / 100.0f) + 4.0f) * sp188.z) + sp16C.z;
@@ -335,18 +331,18 @@ void func_80AF95C4(EnSda* this, u8* shadowTexture, Player* player, GlobalContext
     printf("SDA CONT 4\n");
 }
 
-void func_80AF9C70(u8* shadowTexture, Player* player, GlobalContext* globalCtx) {
+void EnSda_MixedShadowDraw(u8* shadowTexture, Player* player, GlobalContext* globalCtx) {
     s32 pad;
     f32 tempx;
     f32 tempz;
     s16 phi_s1;
     GraphicsContext* gfxCtx = globalCtx->state.gfxCtx;
-
+    FrameInterpolation_StartRecord();
     OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
 
     printf("SDA D 1 - Mixed shadow draw\n");
     func_80094044(globalCtx->state.gfxCtx);
-    gDPSetPrimColor(POLY_XLU_DISP++, 0x00, 0x00, 0, 0, 0, (BREG(52) + 50));
+    gDPSetPrimColor(POLY_XLU_DISP++, 0x00, 0x00, 0, 0, 0, 120); //Alphe : (BREG(52) + 50)
     gDPSetEnvColor(POLY_XLU_DISP++, 0, 0, 0, 0);
     Matrix_Translate(player->actor.world.pos.x, player->actor.floorHeight, player->actor.world.pos.z, MTXMODE_NEW);
     Matrix_RotateY(BREG(51) / 100.0f, MTXMODE_APPLY);
@@ -371,4 +367,5 @@ void func_80AF9C70(u8* shadowTexture, Player* player, GlobalContext* globalCtx) 
     }
     printf("SDA D 2 Mixed Shadow Draw End\n");
     CLOSE_DISPS(gfxCtx, __FILE__, __LINE__);
+    FrameInterpolation_StopRecord();
 }
