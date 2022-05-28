@@ -138,10 +138,10 @@ void EnSda_ShadowMotion(Player* player, u8* shadowTexture, f32 arg2) {
     Vec3f lerp;
     Vec3f sp88;
     Vec3f sp7C;
-
     //printf("SDA - Moving Joints - Begin \n");
     for (i = 0; i < 16; i++) {
         if ((arg2 == 0.0f) || ((j = D_80AFA13C[i]) >= 0)) {
+            printf("SDA - Moving Joints - (arg2 == 0.0f) || ((j = D_80AFA13C[i]) >= 0) \n");
             if (arg2 > 0.0f) {
                 printf("SDA - Moving Joints - arg2 > 0.0f \n");
                 lerp.x = D_80AFA660[i].x + (D_80AFA660[j].x - D_80AFA660[i].x) * arg2;
@@ -337,7 +337,6 @@ void EnSda_MixedShadowDraw(u8* shadowTexture, Player* player, GlobalContext* glo
     f32 tempz;
     s16 phi_s1;
     GraphicsContext* gfxCtx = globalCtx->state.gfxCtx;
-    FrameInterpolation_StartRecord();
     OPEN_DISPS(gfxCtx, __FILE__, __LINE__);
 
     printf("SDA D 1 - Mixed shadow draw\n");
@@ -367,5 +366,4 @@ void EnSda_MixedShadowDraw(u8* shadowTexture, Player* player, GlobalContext* glo
     }
     printf("SDA D 2 Mixed Shadow Draw End\n");
     CLOSE_DISPS(gfxCtx, __FILE__, __LINE__);
-    FrameInterpolation_StopRecord();
 }
